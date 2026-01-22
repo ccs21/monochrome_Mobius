@@ -1,0 +1,17 @@
+People total: 221 (added from candidates: 200)
+Terms total: 21 (added from candidates with fixed_ko: 0)
+
+Non-standard gender values (kept as-is):
+- @一同: 혼성
+- @民衆: 혼성
+- @オシュトル・シューニャ: 혼성
+- @ハミャグリ: ? (뭔지 모름)
+- @オシュトル・ミカヅチ・ムネチカ: 혼성
+- @全員: 혼성
+- @シューニャ・ハル: 혼성
+- @ネコネ・キウル: 혼성
+- @村人たち: 혼성
+- @オシュトル・ムネチカ: 혼성
+- @皆: 혼성
+- @三下たち: 혼성
+- @ムネチカ・ミカヅチ: 혼성

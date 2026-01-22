@@ -1,0 +1,11 @@
+ruby_remove: true
+keep_english_as_is: true
+tag_preserve_curly_braces: true
+noise_remove:
+  outside_tags:
+  - Cyrillic(U+0400-04FF)
+  - isolated_garbage_after_small_tsu
+line_output:
+  always_wrap_with_quotes: true
+  keep_line_count_1_to_1: true
+  no_literal_backslash_n: true
