@@ -8,7 +8,7 @@ UI, 아이템 등 대사 이외의 번역은 유니티 번역 플러그인을 �
 번역은 gpt 번역, 검수 및 수정은 하지 않습니다.
 
 
-# GPT 번역 자동화 실행 방법
+# GPT 번역 자동화
 
 ## 스캔
 python main.py scan --xlsx "번역.xlsx" --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel_updated.yaml"
