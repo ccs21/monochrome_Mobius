@@ -1,0 +1,10 @@
+# secrets
+.env
+*.env
+
+# caches
+.cache.sqlite3
+*.sqlite3
+
+# outputs
+*_ko_filled.xlsx
