@@ -14,9 +14,4 @@ UI, 아이템 등 대사 이외의 번역은 유니티 번역 플러그인을 �
 python main.py scan --xlsx "번역.xlsx" --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel_updated.yaml"
 
 ## 번역
-python main.py translate --xlsx "번역.xlsx" --out "번역_ko_filled.xlsx" ^
-  --env-file "env 파일 경로" ^
-  --dict-people "people_dict_from_excel.yaml" ^
-  --dict-terms "terms_dict_from_excel_updated.yaml" ^
-  --dict-relations "relations_rules_from_excel.yaml" ^
-  --dict-style "style_rules.yaml"
+python main.py translate --xlsx "번역.xlsx" --out "번역_ko_filled.xlsx" --env-file "env 파일 경로" --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel_updated.yaml" --dict-relations "relations_rules_from_excel.yaml" --dict-style "style_rules.yaml"
