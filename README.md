@@ -15,3 +15,4 @@ python main.py scan --xlsx "번역.xlsx" --dict-people "people_dict_from_excel.y
 
 ## 번역
 python main.py translate --xlsx "번역.xlsx" --out "번역_translated.xlsx" --env-file "F:\모노크롬 한글패치\work\.env" --model "gpt-4.1" --chunk 40 --min-delay 0.2 --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel.yaml" --dict-relations "relations_rules_from_excel.yaml" --dict-style "style_rules.yaml"
+
