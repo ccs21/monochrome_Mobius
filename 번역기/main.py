@@ -43,6 +43,10 @@ RUBY_RE = re.compile(r"\[([^*\]]+)\*([^\]]+)\]")
 # Characters that often appear as extraction noise in this project
 NOISE_CHARS = set(["Ц", "Ч"])
 
+# Newline shield tag (to enforce strict newline structure)
+NL_TAG = "{__NL__}"
+NL_ESC = "{__NL_ESC__}"
+
 
 def read_yaml(path: str) -> dict:
     p = Path(path)
@@ -90,6 +94,29 @@ def stable_hash(*items: str) -> str:
 
 def count_newlines(s: str) -> int:
     return (s or "").count("\n")
+
+
+def encode_newlines_for_model(s: str) -> str:
+    """
+    Replace real newlines with NL_TAG so the model can't accidentally merge/split lines.
+    Also escape any literal NL_TAG that might already exist.
+    """
+    s = s or ""
+    s = s.replace(NL_TAG, NL_ESC)
+    return s.replace("\n", NL_TAG)
+
+
+def decode_newlines_from_model(s: str) -> str:
+    """
+    Restore real newlines from NL_TAG, and unescape any originally-literal NL_TAG.
+    """
+    s = s or ""
+    s = s.replace(NL_TAG, "\n")
+    return s.replace(NL_ESC, NL_TAG)
+
+
+def count_nl_tag(s: str) -> int:
+    return (s or "").count(NL_TAG)
 
 
 # -----------------------------
@@ -303,8 +330,8 @@ def build_system_instructions(bundle: DictBundle, *, strict_newlines: bool = Tru
     nl_rule = ""
     if strict_newlines:
         nl_rule = (
-            "8) 원문에 포함된 줄바꿈(개행)은 개수와 위치를 반드시 유지하라. "
-            "출력에 \\n 문자열을 쓰지 말고 실제 줄바꿈을 넣어라.\n"
+            f"8) 원문에 포함된 줄바꿈은 실제 \\n이 아니라 '{NL_TAG}' 태그로 전달된다. "
+            f"출력에서 '{NL_TAG}' 태그의 개수/위치/문자열을 절대 변경하지 말고 그대로 유지하라.\n"
         )
     return (
         "너는 '칭송받는 자 시리즈: 모노크롬 뫼비우스' 한국어 현지화 번역가다.\n"
@@ -361,12 +388,16 @@ def validate_tag_preservation(src_list: List[str], out_list: List[str]) -> Tuple
     return True, ""
 
 
-def validate_newline_preservation(src_list: List[str], out_list: List[str]) -> Tuple[bool, str]:
+def validate_newline_preservation_encoded(src_list: List[str], out_list: List[str]) -> Tuple[bool, str]:
+    """
+    When strict_newlines is enabled, we don't compare raw \\n counts.
+    We compare NL_TAG occurrences instead (because \\n are encoded as tags).
+    """
     for i, (src, out) in enumerate(zip(src_list, out_list)):
-        if count_newlines(src) != count_newlines(out):
+        if count_nl_tag(src) != count_nl_tag(out):
             return (
                 False,
-                f"newline_mismatch at index {i}: src_nl={count_newlines(src)} out_nl={count_newlines(out)}",
+                f"newline_mismatch at index {i}: src_nl={count_nl_tag(src)} out_nl={count_nl_tag(out)}",
             )
     return True, ""
 
@@ -383,18 +414,24 @@ def translate_batch(
 ) -> List[str]:
     sys_inst = build_system_instructions(bundle, strict_newlines=strict_newlines)
 
+    # If strict_newlines: encode newlines to NL_TAG to prevent merge/split.
+    if strict_newlines:
+        encoded_src_lines = [encode_newlines_for_model(s) for s in src_lines]
+    else:
+        encoded_src_lines = src_lines[:]
+
     # Reduce prompt cost by only sending terms that appear in this batch.
     terms_subset = None
     if dict_scope == "subset":
-        joined = "\n".join(src_lines)
+        joined = "\n".join(src_lines)  # search on raw text (not encoded)
         terms_subset = {k: v for k, v in bundle.terms.items() if k and k in joined}
     dict_block = build_dict_section(bundle, terms_subset=terms_subset)
 
     user_input = {
         "task": "Translate JA->KO for game localization.",
-        "notes": "Return JSON array only. Keep newline structure.",
+        "notes": "Return JSON array only.",
         "dicts": dict_block,
-        "lines": src_lines,
+        "lines": encoded_src_lines,
     }
 
     resp = client.responses.create(
@@ -412,27 +449,38 @@ def translate_batch(
         text2 = text.strip("` \n")
         data = json.loads(text2)
 
-    if not isinstance(data, list) or len(data) != len(src_lines):
+    if not isinstance(data, list) or len(data) != len(encoded_src_lines):
         raise ValueError(
-            f"Bad output shape. expected list[{len(src_lines)}], got {type(data)} len={len(data) if isinstance(data, list) else 'n/a'}"
+            f"Bad output shape. expected list[{len(encoded_src_lines)}], got {type(data)} len={len(data) if isinstance(data, list) else 'n/a'}"
         )
 
-    out_lines: List[str] = []
+    out_lines_encoded: List[str] = []
     for s in data:
         if not isinstance(s, str):
             s = str(s)
+        # NOTE: keep NL_TAG as-is here (it's inside {...} so TAG_RE sees it as a tag)
         s = strip_ruby_notation(s)
         s = remove_noise_outside_tags(s)
-        out_lines.append(s)
+        out_lines_encoded.append(s)
 
-    ok, msg = validate_tag_preservation(src_lines, out_lines)
+    # Validate tag preservation against encoded source (includes NL_TAG)
+    ok, msg = validate_tag_preservation(encoded_src_lines, out_lines_encoded)
     if not ok:
         raise ValueError(msg)
 
+    # Validate NL_TAG preservation (strict)
     if strict_newlines:
-        ok2, msg2 = validate_newline_preservation(src_lines, out_lines)
+        ok2, msg2 = validate_newline_preservation_encoded(encoded_src_lines, out_lines_encoded)
         if not ok2:
             raise ValueError(msg2)
+
+    # Decode NL_TAG back to real newlines for writing to Excel
+    out_lines: List[str] = []
+    if strict_newlines:
+        for s in out_lines_encoded:
+            out_lines.append(decode_newlines_from_model(s))
+    else:
+        out_lines = out_lines_encoded
 
     return out_lines
 
@@ -523,31 +571,65 @@ def main():
         help="Send only glossary entries relevant to each chunk (subset) or the full glossary.",
     )
     ap_tr.add_argument("--min-delay", type=float, default=0.25, help="Minimum seconds to sleep between API calls.")
+
+    # Checkpoint saving: default ON, allow OFF
     ap_tr.add_argument(
         "--save-every-batch",
+        dest="save_every_batch",
         action="store_true",
         default=True,
-        help="Checkpoint by saving the output xlsx after each translated chunk (default).",
+        help="Checkpoint by saving the output xlsx after each translated chunk (default ON).",
+    )
+    ap_tr.add_argument(
+        "--no-save-every-batch",
+        dest="save_every_batch",
+        action="store_false",
+        help="Disable per-batch checkpoint saving.",
     )
 
-    # 새 옵션(기본 ON)
+    # Strict newline: default ON, allow OFF
     ap_tr.add_argument(
         "--strict-newlines",
+        dest="strict_newlines",
         action="store_true",
         default=True,
-        help="Force newline count to match source. Mismatch triggers retry (default ON).",
+        help="Force newline structure to match source (default ON).",
     )
     ap_tr.add_argument(
+        "--no-strict-newlines",
+        dest="strict_newlines",
+        action="store_false",
+        help="Disable strict newline enforcement.",
+    )
+
+    # Resume strict newline check: default ON, allow OFF
+    ap_tr.add_argument(
         "--strict-newlines-resume",
+        dest="strict_newlines_resume",
         action="store_true",
         default=True,
         help="When resuming, retranslate rows whose newline count differs (default ON).",
     )
     ap_tr.add_argument(
+        "--no-strict-newlines-resume",
+        dest="strict_newlines_resume",
+        action="store_false",
+        help="Disable resume newline mismatch retranslation.",
+    )
+
+    # Wrap text in Excel: default ON, allow OFF
+    ap_tr.add_argument(
         "--wrap-text",
+        dest="wrap_text",
         action="store_true",
         default=True,
         help="Set wrap_text=True for ko cells so Excel shows newlines (default ON).",
+    )
+    ap_tr.add_argument(
+        "--no-wrap-text",
+        dest="wrap_text",
+        action="store_false",
+        help="Do not change Excel cell wrap_text.",
     )
 
     args = ap.parse_args()
@@ -601,8 +683,10 @@ def main():
 
         for group in chunked(to_tr, args.chunk):
             src_lines = [r["ja"] for r in group]
+
+            # Cache key bump: v4 (newline-tag shield)
             cache_key = stable_hash(
-                "v3",
+                "v4",
                 args.model,
                 args.dict_scope,
                 str(bool(args.strict_newlines)),
