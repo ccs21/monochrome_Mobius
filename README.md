@@ -20,3 +20,7 @@ python main.py scan --xlsx "번역.xlsx" --dict-people "people_dict_from_excel.y
 python main.py translate --xlsx "번역.xlsx" --out "ko_translated.csv" --env-file "F:\모노크롬 한글패치\work\.env" --model "gpt-4.1" --chunk 40 --min-delay 0.2 --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel.yaml" --dict-relations "relations_rules_from_excel.yaml" --dict-style "style_rules.yaml"
 ```
 
+## 번역된 문서를 마스터에 병합
+```
+python merge_ko_by_scenario_label.py --master master_dialog.csv --translated ko_translated.csv --out master_dialog_filled.csv
+```
