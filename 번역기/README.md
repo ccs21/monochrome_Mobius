@@ -44,4 +44,7 @@ python main.py translate --xlsx "번역.xlsx" --out "번역_ko_filled.xlsx" ^
 
 ### Notes
 - Translation uses chunking (default 40 lines/request) + SQLite cache to reduce cost.
-- It *validates* tag preservation and line-count match; on failure it retries with stricter instructions.
+- **Resume-safe**: if `--out` already exists, the translator loads it and continues, translating only rows where `ko` is blank.
+- **Checkpointing**: after each chunk is translated, the workbook is saved atomically (temp file -> replace) so you can restart anytime.
+- **Rate-limit handling**: on 429/timeout/transient errors, it automatically sleeps and retries (with exponential backoff). Use `--min-delay` to pace requests.
+- It *validates* tag preservation and 1:1 line-count match; on failure it retries with stricter instructions.
