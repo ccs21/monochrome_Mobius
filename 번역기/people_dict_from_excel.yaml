@@ -1,663 +1,663 @@
-'@覆面の男':
+'覆面の男':
   name_ko: 가면의 남자
   gender: 남성
-'@少女':
+'少女':
   name_ko: 소녀
   gender: 여성
-'@シューニャ':
+'シューニャ':
   name_ko: 슈냐
   gender: 여성
-'@？':
+'？':
   name_ko: '?'
   gender: 미상
-'@パシュパクル':
+'パシュパクル':
   name_ko: 파쉬파쿠르
   gender: 남성
-'@マヤカゥア':
+'マヤカゥア':
   name_ko: 마야카아
   gender: 남성
-'@兵士達':
+'兵士達':
   name_ko: 병사들
   gender: 남성
-'@ネコネ':
+'ネコネ':
   name_ko: 네코네
   gender: 여성
-'@ムラサメ':
+'ムラサメ':
   name_ko: 무라사메
   gender: 여성
-'@シャントゥーラ':
+'シャントゥーラ':
   name_ko: 샨투라
   gender: 여성
-'@キウル':
+'キウル':
   name_ko: 키우루
   gender: 남성
-'@オシュトル':
+'オシュトル':
   name_ko: 오슈토르
   gender: 남성
-'@トリコリ':
+'トリコリ':
   name_ko: 토리코리
   gender: 여성
-'@市場の客一':
+'市場の客一':
   name_ko: 시장 손님1
   gender: 미상
-'@市場の客二':
+'市場の客二':
   name_ko: 시장 손님2
   gender: 미상
-'@店の主人':
+'店の主人':
   name_ko: 가게 주인
   gender: 미상
-'@イラワジ':
+'イラワジ':
   name_ko: 이라와지
   gender: 남성
-'@飼育場の親父一':
+'飼育場の親父一':
   name_ko: 사육장 아저씨1
   gender: 남성
-'@飼育場の親父二':
+'飼育場の親父二':
   name_ko: 사육장 아저씨2
   gender: 남성
-'@飼育場の親父三':
+'飼育場の親父三':
   name_ko: 사육장 아저씨3
   gender: 남성
-'@農家の親父':
+'農家の親父':
   name_ko: 농가의 아저씨
   gender: 남성
-'@ミカヅチ':
+'ミカヅチ':
   name_ko: 미카즈치
   gender: 남성
-'@ムネチカ':
+'ムネチカ':
   name_ko: 무네치카
   gender: 여성
-'@ハル':
+'ハル':
   name_ko: 하루
   gender: 미상
-'@ディコトマ':
+'ディコトマ':
   name_ko: 디코토마
   gender: 남성
-'@帝':
+'帝':
   name_ko: 황제
   gender: 남성
-'@Narration':
+'Narration':
   name_ko: 나레이션
   gender: 미상
-'@マロロ':
+'マロロ':
   name_ko: 마로로
   gender: 남성
-'@ライコウ':
+'ライコウ':
   name_ko: 라이코우
   gender: 남성
-'@衛兵':
+'衛兵':
   name_ko: 위병
   gender: 남성
-'@ホノカ':
+'ホノカ':
   name_ko: 호노카
   gender: 여성
-'@アシュタ':
+'アシュタ':
   name_ko: 아슈타
   gender: 남성
-'@ウコン':
+'ウコン':
   name_ko: 우콘
   gender: 남성
-'@ナラクファラ':
+'ナラクファラ':
   name_ko: 나락파라
   gender: 남성
-'@ウォシス':
+'ウォシス':
   name_ko: 워시스
   gender: 남성
-'@サコン':
+'サコン':
   name_ko: 사콘
   gender: 남성
-'@ナーヴァ':
+'ナーヴァ':
   name_ko: 나바
   gender: 남성
-'@ミト':
+'ミト':
   name_ko: 미토
   gender: 남성
-'@宝鉱夫':
+'宝鉱夫':
   name_ko: 광부
   gender: 남성
-'@イシネン':
+'イシネン':
   name_ko: 이시넨
   gender: 남성
-'@アンジュ':
+'アンジュ':
   name_ko: 안쥬
   gender: 여성
-'@ムーちゃん':
+'ムーちゃん':
   name_ko: 무쨩
   gender: 미상
-'@関所兵':
+'関所兵':
   name_ko: 관문병
   gender: 남성
-'@デコポンポ':
+'デコポンポ':
   name_ko: 데코폼포
   gender: 남성
-'@リョウゲン':
+'リョウゲン':
   name_ko: 리오겐
   gender: 여성
-'@ンハライ':
+'ンハライ':
   name_ko: 운하라이
   gender: 미상
-'@シーちゃん':
+'シーちゃん':
   name_ko: 치쨩
   gender: 여성
-'@輸送商':
+'輸送商':
   name_ko: 행상인
   gender: 미상
-'@若い女性':
+'若い女性':
   name_ko: 젊은 여성
   gender: 여성
-'@手紙':
+'手紙':
   name_ko: 편지
   gender: 미상
-'@アヅマ':
+'アヅマ':
   name_ko: 아즈마
   gender: 남성
-'@ユゥリ':
+'ユゥリ':
   name_ko: 유리
   gender: 여성
-'@女の子':
+'女の子':
   name_ko: 여자아이
   gender: 여성
-'@男の子':
+'男の子':
   name_ko: 남자아이
   gender: 남성
-'@イナヅマ':
+'イナヅマ':
   name_ko: 이나즈마
   gender: 미상
-'@ライデン':
+'ライデン':
   name_ko: 라이덴
   gender: 미상
-'@宝鉱夫の監督':
+'宝鉱夫の監督':
   name_ko: 광부 감독관
   gender: 남성
-'@シチーリヤ':
+'シチーリヤ':
   name_ko: 시치리야
   gender: 여성
-'@初老の男':
+'初老の男':
   name_ko: 초로의 남자
   gender: 남성
-'@ヴァルガ':
+'ヴァルガ':
   name_ko: 바르가
   gender: 미상
-'@飛脚':
+'飛脚':
   name_ko: 파발
   gender: 미상
-'@ボコイナンテ':
+'ボコイナンテ':
   name_ko: 보코이난테
   gender: 남성
-'@獣面の男':
+'獣面の男':
   name_ko: 동물 얼굴의 남자
   gender: 남성
-'@オシュトル・ミカヅチ':
+'オシュトル・ミカヅチ':
   name_ko: 오슈토르・미카즈치
   gender: 남성
-'@村長':
+'村長':
   name_ko: 촌장
   gender: 남성
-'@男性':
+'男性':
   name_ko: 남성
   gender: 남성
-'@茶屋の客':
+'茶屋の客':
   name_ko: 찻집 손님
   gender: 미상
-'@ヴライ':
+'ヴライ':
   name_ko: 브라이
   gender: 남성
-'@青年':
+'青年':
   name_ko: 청년
   gender: 남성
-'@門衛':
+'門衛':
   name_ko: 문지기
   gender: 미상
-'@ソヤンケクル':
+'ソヤンケクル':
   name_ko: 소얀케쿠르
   gender: 남성
-'@店の女の子':
+'店の女の子':
   name_ko: 가게의 소녀
   gender: 여성
-'@装備屋の主人':
+'装備屋の主人':
   name_ko: 장비점 주인
   gender: 미상
-'@中年女性':
+'中年女性':
   name_ko: 중년 여성
   gender: 여성
-'@ラウラウ先生':
+'ラウラウ先生':
   name_ko: 라우라우 선생
   gender: 남성
-'@宿屋の女将':
+'宿屋の女将':
   name_ko: 여관 안주인
   gender: 여성
-'@羽振りの良い商人':
+'羽振りの良い商人':
   name_ko: 위세 좋은 상인
   gender: 남성
-'@オーゼン':
+'オーゼン':
   name_ko: 오우젠
   gender: 남성
-'@仕入れ商人':
+'仕入れ商人':
   name_ko: 매입 상인
   gender: 남성
-'@荷をさばく商人':
+'荷をさばく商人':
   name_ko: 짐을 싸는 상인
   gender: 남성
-'@女性':
+'女性':
   name_ko: 여성
   gender: 여성
-'@関所隊長':
+'関所隊長':
   name_ko: 관문 대장
   gender: 남성
-'@中年男性':
+'中年男性':
   name_ko: 중년 남성
   gender: 남성
-'@左近衛衆':
+'左近衛衆':
   name_ko: 좌근위대
   gender: 미상
-'@呑んだくれ':
+'呑んだくれ':
   name_ko: 술 마시는 사람
   gender: 미상
-'@市場の客':
+'市場の客':
   name_ko: 시장의 손님
   gender: 미상
-'@老爺':
+'老爺':
   name_ko: 늙은이
   gender: 미상
-'@行商人':
+'行商人':
   name_ko: 보따리 장수
   gender: 미상
-'@茶屋の看板娘':
+'茶屋の看板娘':
   name_ko: 찻집 간판 아가씨
   gender: 여성
-'@碑文':
+'碑文':
   name_ko: 비문
   gender: 미상
-'@老婆':
+'老婆':
   name_ko: 노파
   gender: 여성
-'@大店の主人':
+'大店の主人':
   name_ko: 큰 가게 주인
   gender: 미상
-'@休日中の兵':
+'休日中の兵':
   name_ko: 휴가중인 병사
   gender: 남성
-'@居酒屋の店主':
+'居酒屋の店主':
   name_ko: 술집 주인
   gender: 미상
-'@ミライ？':
+'ミライ？':
   name_ko: 미라이?
   gender: 여성
-'@学士':
+'学士':
   name_ko: 학사
   gender: 미상
-'@自警団の若者':
+'自警団の若者':
   name_ko: 자경단의 젊은이
   gender: 남성
-'@アシワラ出身の女':
+'アシワラ出身の女':
   name_ko: 아시와라 출신의 여자
   gender: 여성
-'@宿屋の主人':
+'宿屋の主人':
   name_ko: 여관 주인
   gender: 남성
-'@食道楽な老爺':
+'食道楽な老爺':
   name_ko: 식도락을 즐기는 노인
   gender: 미상
-'@アシワラ出身の男':
+'アシワラ出身の男':
   name_ko: 아시와라 출신의 남자
   gender: 남성
-'@一同':
+'一同':
   name_ko: 일동
   gender: 혼성
-'@列整理担当者':
+'列整理担当者':
   name_ko: 대열정리 담당자
   gender: 미상
-'@飼育場の親父':
+'飼育場の親父':
   name_ko: 사육장의 아저씨
   gender: 남성
-'@お土産屋さん':
+'お土産屋さん':
   name_ko: 선물 가게
   gender: 미상
-'@廻船問屋の主人':
+'廻船問屋の主人':
   name_ko: 회선 도매상의 주인
   gender: 미상
-'@ジロン':
+'ジロン':
   name_ko: 지론
   gender: 남성
-'@イズルハ出身の男':
+'イズルハ出身の男':
   name_ko: 이즈루하 출신의 남자
   gender: 남성
-'@買い物客':
+'買い物客':
   name_ko: 쇼핑객
   gender: 미상
-'@ナコク出身の女':
+'ナコク出身の女':
   name_ko: 나코쿠 출신의 여자
   gender: 여성
-'@野次馬':
+'野次馬':
   name_ko: 구경꾼
   gender: 미상
-'@屋台の親父':
+'屋台の親父':
   name_ko: 포장마차의 아저씨
   gender: 남성
-'@病気の夫':
+'病気の夫':
   name_ko: 병든 남편
   gender: 남성
-'@帝都から来た商人':
+'帝都から来た商人':
   name_ko: 제도에서 온 상인
   gender: 미상
-'@遊宮のお嬢':
+'遊宮のお嬢':
   name_ko: 유궁 아가씨
   gender: 여성
-'@病気の妻':
+'病気の妻':
   name_ko: 병든 아내
   gender: 여성
-'@門衛一':
+'門衛一':
   name_ko: 문지기1
   gender: 남성
-'@双子':
+'双子':
   name_ko: 쌍둥이
   gender: 미상
-'@チンピラ':
+'チンピラ':
   name_ko: 양아치
   gender: 남성
-'@目つきの鋭い老人':
+'目つきの鋭い老人':
   name_ko: 눈빛이 날카로운 노인
   gender: 남성
-'@男':
+'男':
   name_ko: 남자
   gender: 남성
-'@舟侍':
+'舟侍':
   name_ko: 시종
   gender: 미상
-'@廷臣':
+'廷臣':
   name_ko: 신하
   gender: 미상
-'@━━━':
+'━━━':
   name_ko: ━━━
   gender: 미상
-'@民衆':
+'民衆':
   name_ko: 민중
   gender: 혼성
-'@興奮気味の青年':
+'興奮気味の青年':
   name_ko: 흥분기운이 있는 청년
   gender: 남성
-'@茶店の女主人':
+'茶店の女主人':
   name_ko: 찻집의 여주인
   gender: 여성
-'@水路の管理人':
+'水路の管理人':
   name_ko: 수로 관리인
   gender: 남성
-'@宝鉱夫・右':
+'宝鉱夫・右':
   name_ko: 광부(우)
   gender: 남성
-'@伝令':
+'伝令':
   name_ko: 전령
   gender: 남성
-'@砦守備隊長':
+'砦守備隊長':
   name_ko: 요새 수비 대장
   gender: 남성
-'@武芸者':
+'武芸者':
   name_ko: 무예가
   gender: 남성
-'@砦守備兵':
+'砦守備兵':
   name_ko: 요새수비병
   gender: 남성
-'@門衛二':
+'門衛二':
   name_ko: 문지기2
   gender: 남성
-'@ランシュタル':
+'ランシュタル':
   name_ko: 란슈탈
   gender: 남성
-'@壺振り':
+'壺振り':
   name_ko: 도박사
   gender: 남성
-'@客':
+'客':
   name_ko: 손님
   gender: 미상
-'@若衆頭':
+'若衆頭':
   name_ko: 젊은 중
   gender: 남성
-'@音声':
+'音声':
   name_ko: 음성
   gender: 미상
-'@隊長':
+'隊長':
   name_ko: 대장
   gender: 남성
-'@若奥様':
+'若奥様':
   name_ko: 젊은 마님
   gender: 여성
-'@討伐隊長':
+'討伐隊長':
   name_ko: 토벌 대장
   gender: 남성
-'@富くじ屋のオヤジ':
+'富くじ屋のオヤジ':
   name_ko: 복권쟁이 아재
   gender: 남성
-'@小さな唄い手':
+'小さな唄い手':
   name_ko: 작은 소리꾼
   gender: 남성
-'@イサマン一家侠客':
+'イサマン一家侠客':
   name_ko: 이사만 일가 협객
   gender: 남성
-'@メイドロボ':
+'メイドロボ':
   name_ko: 메이드 로봇
   gender: 여성
-'@宝鉱夫・左':
+'宝鉱夫・左':
   name_ko: 광부(좌)
   gender: 남성
-'@付き人':
+'付き人':
   name_ko: 수행원
   gender: 미상
-'@ミライ':
+'ミライ':
   name_ko: 미라이
   gender: 여성
-'@射的屋の兄ちゃん':
+'射的屋の兄ちゃん':
   name_ko: 사격장의 남자
   gender: 남성
-'@ホオズキ':
+'ホオズキ':
   name_ko: 호즈키
   gender: 남성
-'@三下':
+'三下':
   name_ko: 미토
   gender: 남성
-'@近衛衆':
+'近衛衆':
   name_ko: 근위병
   gender: 남성
-'@商人に扮した役人':
+'商人に扮した役人':
   name_ko: 상인으로 변장한 관리
   gender: 남성
-'@声':
+'声':
   name_ko: 목소리
   gender: 미상
-'@エンナカムイ隊商人':
+'エンナカムイ隊商人':
   name_ko: 엔나카무이 대상인
   gender: 남성
-'@女主人':
+'女主人':
   name_ko: 여주인
   gender: 여성
-'@マサムネ':
+'マサムネ':
   name_ko: 마사무네
   gender: 남성
-'@首を抱えた男':
+'首を抱えた男':
   name_ko: 목을 움켜쥔 사나이
   gender: 남성
-'@女の霊':
+'女の霊':
   name_ko: 여자의 영혼
   gender: 여성
-'@厳つい顔の男':
+'厳つい顔の男':
   name_ko: 엄격한 얼굴의 사나이
   gender: 남성
-'@大きな唄い手':
+'大きな唄い手':
   name_ko: 큰 소리꾼
   gender: 남성
-'@兵':
+'兵':
   name_ko: 병사
   gender: 남성
-'@ランシュタルの妻':
+'ランシュタルの妻':
   name_ko: 란슈탈의 아내
   gender: 여성
-'@ザクロ':
+'ザクロ':
   name_ko: 자쿠로
   gender: 남성
-'@女の子の母親':
+'女の子の母親':
   name_ko: 여자의 어머니
   gender: 여성
-'@ならず者':
+'ならず者':
   name_ko: 불량한 자
   gender: 남성
-'@輸送団長':
+'輸送団長':
   name_ko: 수송단장
   gender: 남성
-'@地縛霊':
+'地縛霊':
   name_ko: 지박령
   gender: 미상
-'@俥夫':
+'俥夫':
   name_ko: 인력거꾼
   gender: 남성
-'@追っ手一':
+'追っ手一':
   name_ko: 추격자1
   gender: 남성
-'@追っ手二':
+'追っ手二':
   name_ko: 추격자2
   gender: 남성
-'@オシュトル・シューニャ':
+'オシュトル・シューニャ':
   name_ko: 오슈토르・슈나
   gender: 혼성
-'@ハミャグリ':
+'ハミャグリ':
   name_ko: 하미야구리
   gender: '?'
-'@男衆全員':
+'男衆全員':
   name_ko: 남성 전원
   gender: 남성
-'@町人':
+'町人':
   name_ko: 동네 사람
   gender: 미상
-'@アシュタ・ナーヴァ':
+'アシュタ・ナーヴァ':
   name_ko: 아슈타・나바
   gender: 남성
-'@オシュトル・ミカヅチ・ムネチカ':
+'オシュトル・ミカヅチ・ムネチカ':
   name_ko: 오슈토르・미카즈치・무네치카
   gender: 혼성
-'@ゴロツキ':
+'ゴロツキ':
   name_ko: 양아치
   gender: 남성
-'@三人':
+'三人':
   name_ko: 세사람
   gender: 미상
-'@幼い女の子':
+'幼い女の子':
   name_ko: 어린 소녀
   gender: 여성
-'@庭師':
+'庭師':
   name_ko: 정원사
   gender: 미상
-'@荷を積む男性':
+'荷を積む男性':
   name_ko: 짐을 싣는 남자
   gender: 남성
-'@宿屋の女子衆':
+'宿屋の女子衆':
   name_ko: 여인숙의 여종업원
   gender: 여성
-'@討伐隊兵士':
+'討伐隊兵士':
   name_ko: 토벌대 병사
   gender: 남성
-'@門衛達':
+'門衛達':
   name_ko: 문지기들
   gender: 남성
-'@オシュトル・ミカヅチ・ハル':
+'オシュトル・ミカヅチ・ハル':
   name_ko: 오슈토르・미카즈치・하루
   gender: 남성
-'@店の女の子たち':
+'店の女の子たち':
   name_ko: 가게의 여자아이들
   gender: 여성
-'@ウコン・サコン':
+'ウコン・サコン':
   name_ko: 우콘・사콘
   gender: 남성
-'@全員':
+'全員':
   name_ko: 전원
   gender: 혼성
-'@酔っぱらった町人':
+'酔っぱらった町人':
   name_ko: 술취한 상인
   gender: 남성
-'@ギギリ人形':
+'ギギリ人形':
   name_ko: 기기리 인형
   gender: 미상
-'@女の子達':
+'女の子達':
   name_ko: 여자 아이들
   gender: 여성
-'@シューニャ・ムネチカ':
+'シューニャ・ムネチカ':
   name_ko: 슈냐・무네치카
   gender: 여성
-'@老客':
+'老客':
   name_ko: 노객
   gender: 미상
-'@シューニャ・ハル':
+'シューニャ・ハル':
   name_ko: 슈냐・하루
   gender: 혼성
-'@ディコトマ・ハル':
+'ディコトマ・ハル':
   name_ko: 디코토마・하루
   gender: 남성
-'@元気な夫':
+'元気な夫':
   name_ko: 건강한 남편
   gender: 남성
-'@元気な妻':
+'元気な妻':
   name_ko: 건강한 아내
   gender: 여성
-'@骨董商':
+'骨董商':
   name_ko: 골동품 상인
   gender: 남성
-'@刀狩りの剣客':
+'刀狩りの剣客':
   name_ko: 칼잡이의 검객
   gender: 남성
-'@商人の霊':
+'商人の霊':
   name_ko: 상인의 영혼
   gender: 남성
-'@絡繰り人形':
+'絡繰り人形':
   name_ko: 꼭두각시 인형
   gender: 미상
-'@旅人':
+'旅人':
   name_ko: 여행자
   gender: 미상
-'@ネコネ・キウル':
+'ネコネ・キウル':
   name_ko: 네코네・키우루
   gender: 혼성
-'@帝都からの使者':
+'帝都からの使者':
   name_ko: 제도로부터의 사자
   gender: 미상
-'@村人一':
+'村人一':
   name_ko: 마을 사람1
   gender: 미상
-'@村人二':
+'村人二':
   name_ko: 마을 사람2
   gender: 미상
-'@村人三':
+'村人三':
   name_ko: 마을 사람3
   gender: 미상
-'@村人たち':
+'村人たち':
   name_ko: 마을 사람들
   gender: 혼성
-'@オシュトル・ムネチカ':
+'オシュトル・ムネチカ':
   name_ko: 오슈토르・무네치카
   gender: 혼성
-'@ソヤンケクル・オーゼン':
+'ソヤンケクル・オーゼン':
   name_ko: 소얀케쿠르・오우젠
   gender: 남성
-'@ムーちゃん・シーちゃん':
+'ムーちゃん・シーちゃん':
   name_ko: 무쨩·치쨩
   gender: 여성
-'@ミト・ウコン・サコン':
+'ミト・ウコン・サコン':
   name_ko: 미토・우콘・사콘
   gender: 남성
-'@ハル・ディコトマ':
+'ハル・ディコトマ':
   name_ko: 하루・디코토마
   gender: 남성
-'@人形':
+'人形':
   name_ko: 인형
   gender: 미상
-'@聞き覚えのある声':
+'聞き覚えのある声':
   name_ko: 익숙한 목소리
   gender: 미상
-'@皆':
+'皆':
   name_ko: 모두
   gender: 혼성
-'@三下たち':
+'三下たち':
   name_ko: 미토 일행
   gender: 혼성
-'@検非違使':
+'検非違使':
   name_ko: 검비위사
   gender: 미상
-'@ムネチカ・ミカヅチ':
+'ムネチカ・ミカヅチ':
   name_ko: 무네치카・미카즈치
   gender: 혼성

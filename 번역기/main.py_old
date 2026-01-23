@@ -1,0 +1,843 @@
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import os
+import re
+import sqlite3
+import sys
+import time
+from dataclasses import dataclass
+from hashlib import sha256
+from pathlib import Path
+from typing import Dict, List, Tuple, Optional, Set
+
+import openpyxl
+import yaml
+from tqdm import tqdm
+
+from openpyxl.styles import Alignment
+
+try:
+    from dotenv import dotenv_values
+except Exception:
+    dotenv_values = None
+
+# OpenAI SDK (Responses API)
+from openai import OpenAI  # type: ignore
+
+try:
+    from openai import RateLimitError, APIError, APITimeoutError  # type: ignore
+except Exception:  # pragma: no cover
+    RateLimitError = APIError = APITimeoutError = Exception  # type: ignore
+
+
+# -----------------------------
+# Utils
+# -----------------------------
+
+TAG_RE = re.compile(r"\{[^{}]*\}")
+RUBY_RE = re.compile(r"\[([^*\]]+)\*([^\]]+)\]")
+
+# Characters that often appear as extraction noise in this project
+NOISE_CHARS = set(["Ц", "Ч"])
+
+# Newline shield tag (to enforce strict newline structure)
+NL_TAG = "{__NL__}"
+NL_ESC = "{__NL_ESC__}"
+
+def strip_unexpected_brace_tags(out: str, allowed_tags: set[str]) -> str:
+    """
+    출력에 원문에 없던 { ... } 가 생기면, 게임 태그가 아닐 확률이 높다.
+    => 중괄호만 제거하고 내용은 남긴다: "{仮面}" -> "仮面"
+    """
+    if not out:
+        return out
+
+    def repl(m: re.Match) -> str:
+        tok = m.group(0)
+        # 원문에 있던 태그는 유지 (또는 내부 NL 태그)
+        if tok in allowed_tags or tok in (NL_TAG, NL_ESC):
+            return tok
+        # 원문에 없던 { ... } 는 중괄호만 제거
+        return tok[1:-1]
+
+    return TAG_RE.sub(repl, out)
+
+
+def read_yaml(path: str) -> dict:
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(path)
+    try:
+        with p.open("r", encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    except yaml.YAMLError as e:
+        # Make YAML errors actionable
+        raise ValueError(f"YAML parse error in {path}: {e}") from e
+
+
+def normalize_excel_text(s: str) -> str:
+    # Excel sometimes contains _x000D_\n sequences
+    return (s or "").replace("_x000D_\n", "\n").replace("\r\n", "\n").replace("\r", "\n")
+
+
+def remove_noise_outside_tags(s: str) -> str:
+    # Remove known garbage chars, but keep anything inside { ... } intact.
+    if not s:
+        return s
+    parts = []
+    last = 0
+    for m in TAG_RE.finditer(s):
+        before = s[last:m.start()]
+        before = "".join(ch for ch in before if ch not in NOISE_CHARS)
+        parts.append(before)
+        parts.append(m.group(0))
+        last = m.end()
+    tail = s[last:]
+    tail = "".join(ch for ch in tail if ch not in NOISE_CHARS)
+    parts.append(tail)
+    return "".join(parts)
+
+
+def strip_ruby_notation(s: str) -> str:
+    # [兄*あに] -> 兄
+    return RUBY_RE.sub(lambda m: m.group(1), s or "")
+
+
+def stable_hash(*items: str) -> str:
+    h = sha256()
+    for it in items:
+        h.update(it.encode("utf-8"))
+        h.update(b"\0")
+    return h.hexdigest()
+
+
+def count_newlines(s: str) -> int:
+    return (s or "").count("\n")
+
+
+def encode_newlines_for_model(s: str) -> str:
+    """
+    Replace real newlines with NL_TAG so the model can't accidentally merge/split lines.
+    Also escape any literal NL_TAG that might already exist.
+    """
+    s = s or ""
+    s = s.replace(NL_TAG, NL_ESC)
+    return s.replace("\n", NL_TAG)
+
+
+def decode_newlines_from_model(s: str) -> str:
+    """
+    Restore real newlines from NL_TAG, and unescape any originally-literal NL_TAG.
+    """
+    s = s or ""
+    s = s.replace(NL_TAG, "\n")
+    return s.replace(NL_ESC, NL_TAG)
+
+
+def count_nl_tag(s: str) -> int:
+    return (s or "").count(NL_TAG)
+
+
+def extract_game_tags(s: str) -> List[str]:
+    """
+    Extract { ... } tags but exclude our internal NL shielding tags.
+    """
+    tags = TAG_RE.findall(s or "")
+    return [t for t in tags if t not in (NL_TAG, NL_ESC)]
+
+
+def validate_game_tag_preservation(src_list: List[str], out_list: List[str]) -> Tuple[bool, str]:
+    """
+    Validate only real game tags (excluding NL_TAG/NL_ESC).
+    """
+    for i, (src, out) in enumerate(zip(src_list, out_list)):
+        src_tags = extract_game_tags(src)
+        out_tags = extract_game_tags(out)
+        if src_tags != out_tags:
+            return False, f"tag_mismatch at index {i}: src_tags={src_tags} out_tags={out_tags}"
+    return True, ""
+
+
+def repair_nl_tags_to_match(src_encoded: str, out_encoded: str) -> str:
+    """
+    Make NL_TAG count match src by inserting/removing NL_TAG in out.
+    (We do NOT change other { ... } tags.)
+    """
+    need = count_nl_tag(src_encoded)
+    have = count_nl_tag(out_encoded)
+    if have == need:
+        return out_encoded
+
+    s = out_encoded or ""
+
+    # Too many: remove from the end
+    while have > need:
+        pos = s.rfind(NL_TAG)
+        if pos < 0:
+            break
+        s = s[:pos] + s[pos + len(NL_TAG):]
+        have -= 1
+
+    # Too few: insert at sentence boundaries if possible; otherwise append
+    missing = need - have
+    if missing > 0:
+        inserted = 0
+        # candidate positions: after punctuation (Korean/Japanese/Latin)
+        punct_iter = list(re.finditer(r"[。！？!?…\.]+", s))
+        # Insert after each punctuation, avoiding immediate duplicate NL_TAG
+        for m in punct_iter:
+            if inserted >= missing:
+                break
+            insert_at = m.end()
+            # if already NL_TAG right after, skip
+            if s[insert_at:insert_at + len(NL_TAG)] == NL_TAG:
+                continue
+            s = s[:insert_at] + NL_TAG + s[insert_at:]
+            inserted += 1
+
+        # If still missing, append remaining
+        if inserted < missing:
+            s = s + (NL_TAG * (missing - inserted))
+
+    return s
+
+
+# -----------------------------
+# Cache
+# -----------------------------
+class SqliteCache:
+    def __init__(self, db_path: Path):
+        self.db_path = db_path
+        self.conn = sqlite3.connect(str(db_path))
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS cache (k TEXT PRIMARY KEY, v TEXT NOT NULL, created_at INTEGER NOT NULL)"
+        )
+        self.conn.commit()
+
+    def get(self, k: str) -> Optional[str]:
+        cur = self.conn.execute("SELECT v FROM cache WHERE k=?", (k,))
+        row = cur.fetchone()
+        return row[0] if row else None
+
+    def set(self, k: str, v: str) -> None:
+        self.conn.execute(
+            "INSERT OR REPLACE INTO cache (k, v, created_at) VALUES (?, ?, ?)",
+            (k, v, int(time.time())),
+        )
+        self.conn.commit()
+
+    def close(self) -> None:
+        self.conn.close()
+
+
+# -----------------------------
+# Dictionary bundle
+# -----------------------------
+@dataclass(frozen=True)
+class DictBundle:
+    people: Dict[str, dict]
+    terms: Dict[str, str]
+    relations: dict
+    style: dict
+
+    def signature(self) -> str:
+        # used for caching. Keep short and deterministic.
+        people_sig = stable_hash(json.dumps(self.people, ensure_ascii=False, sort_keys=True))
+        terms_sig = stable_hash(json.dumps(self.terms, ensure_ascii=False, sort_keys=True))
+        rel_sig = stable_hash(json.dumps(self.relations, ensure_ascii=False, sort_keys=True))
+        style_sig = stable_hash(json.dumps(self.style, ensure_ascii=False, sort_keys=True))
+        return stable_hash(people_sig, terms_sig, rel_sig, style_sig)
+
+
+def load_dicts(people_path: str, terms_path: str, relations_path: str | None, style_path: str | None) -> DictBundle:
+    people = read_yaml(people_path)
+    terms = read_yaml(terms_path)
+    relations = read_yaml(relations_path) if relations_path else {}
+    style = read_yaml(style_path) if style_path else {}
+    return DictBundle(people=people, terms=terms, relations=relations, style=style)
+
+
+# -----------------------------
+# Excel IO
+# -----------------------------
+def load_master_dialog_rows(xlsx_path: str) -> Tuple[openpyxl.Workbook, openpyxl.worksheet.worksheet.Worksheet, List[dict]]:
+    wb = openpyxl.load_workbook(xlsx_path)
+    if "master_dialog" not in wb.sheetnames:
+        raise ValueError("Sheet 'master_dialog' not found")
+    ws = wb["master_dialog"]
+
+    # Expect header row at row 1
+    headers = [c.value for c in ws[1]]
+    expected = ["scenario_dir", "Label", "CharacterName", "ja", "ko"]
+    for e in expected:
+        if e not in headers:
+            raise ValueError(f"Missing column: {e}. Found: {headers}")
+
+    idx = {h: headers.index(h) + 1 for h in headers}
+
+    rows = []
+    for r in range(2, ws.max_row + 1):
+        row = {
+            "rownum": r,
+            "scenario_dir": ws.cell(r, idx["scenario_dir"]).value,
+            "Label": ws.cell(r, idx["Label"]).value,
+            "CharacterName": ws.cell(r, idx["CharacterName"]).value,
+            "ja": normalize_excel_text(ws.cell(r, idx["ja"]).value or ""),
+            "ko": normalize_excel_text(ws.cell(r, idx["ko"]).value or ""),
+        }
+        rows.append(row)
+
+    return wb, ws, rows
+
+
+def set_wrap_text(cell) -> None:
+    """Ensure wrap_text so newlines are visible in Excel."""
+    a = cell.alignment
+    if a is None:
+        cell.alignment = Alignment(wrap_text=True, vertical="top")
+        return
+    cell.alignment = Alignment(
+        horizontal=a.horizontal,
+        vertical=a.vertical or "top",
+        text_rotation=a.text_rotation,
+        wrap_text=True,
+        shrink_to_fit=a.shrink_to_fit,
+        indent=a.indent,
+        relative_indent=a.relative_indent,
+        justify_last_line=a.justify_last_line,
+        reading_order=a.reading_order,
+        text_rotation_189=a.text_rotation_189,
+    )
+
+
+def get_ko_col(ws) -> int:
+    headers = [c.value for c in ws[1]]
+    return headers.index("ko") + 1
+
+
+def write_ko_group(ws, ko_col: int, group_rows: List[dict], out_lines: List[str], *, wrap_text: bool = True) -> None:
+    for r, out in zip(group_rows, out_lines):
+        c = ws.cell(r["rownum"], ko_col)
+        c.value = out
+        if wrap_text:
+            set_wrap_text(c)
+
+
+def atomic_save_workbook(wb: openpyxl.Workbook, out_path: Path) -> None:
+    """Safely write xlsx so an interrupted run doesn't corrupt the output."""
+    out_path = out_path.resolve()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out_path.with_suffix(out_path.suffix + ".tmp")
+    wb.save(tmp)
+    os.replace(tmp, out_path)
+
+
+# -----------------------------
+# CSV resume helpers
+# -----------------------------
+CSV_FIELDS = ["scenario_dir", "Label", "CharacterName", "ja", "ko"]
+
+
+def make_row_id(row: dict) -> str:
+    # stable id for resume (scenario_dir + label)
+    return f"{row.get('scenario_dir','')}|{row.get('Label','')}"
+
+
+def load_done_ids_from_csv(csv_path: Path) -> Set[str]:
+    done: Set[str] = set()
+    if not csv_path.exists():
+        return done
+    with csv_path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            sid = f"{r.get('scenario_dir','')}|{r.get('Label','')}"
+            if sid.strip("|"):
+                done.add(sid)
+    return done
+
+
+def open_csv_writer(csv_path: Path) -> Tuple[csv.DictWriter, object]:
+    """
+    Returns (writer, file_handle). Caller must close file_handle.
+    Always writes UTF-8 with BOM for Excel compatibility.
+    """
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    is_new = not csv_path.exists()
+    f = csv_path.open("a", encoding="utf-8-sig", newline="")
+    writer = csv.DictWriter(
+        f,
+        fieldnames=CSV_FIELDS,
+        quoting=csv.QUOTE_ALL,  # 모든 필드를 "..."로 감싸서 쉼표로 쪼개지는 문제 방지
+        lineterminator="\n",
+    )
+    if is_new:
+        writer.writeheader()
+        f.flush()
+    return writer, f
+
+
+def write_csv_group(writer: csv.DictWriter, group_rows: List[dict], out_lines: List[str]) -> None:
+    for row, out in zip(group_rows, out_lines):
+        writer.writerow(
+            {
+                "scenario_dir": row.get("scenario_dir", ""),
+                "Label": row.get("Label", ""),
+                "CharacterName": row.get("CharacterName", ""),
+                "ja": row.get("ja", ""),
+                "ko": out,
+            }
+        )
+
+
+# -----------------------------
+# OpenAI translation
+# -----------------------------
+def load_api_key(env_file: str) -> str:
+    p = Path(env_file)
+    if not p.exists():
+        raise FileNotFoundError(env_file)
+
+    if dotenv_values is not None:
+        vals = dotenv_values(env_file)
+        key = vals.get("OPENAI_API_KEY")
+        if key:
+            return key.strip()
+
+    # Fallback: manual parse
+    for line in p.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("OPENAI_API_KEY="):
+            return line.split("=", 1)[1].strip().strip('"').strip("'")
+    raise ValueError("OPENAI_API_KEY not found in env file")
+
+
+def build_system_instructions(bundle: DictBundle, *, strict_newlines: bool = True) -> str:
+    nl_rule = ""
+    if strict_newlines:
+        nl_rule = (
+            f"8) 원문에 포함된 줄바꿈은 실제 \\n이 아니라 '{NL_TAG}' 태그로 전달된다. "
+            f"출력에서 '{NL_TAG}' 태그는 가능하면 유지하라. (실수로 변경되더라도 추가 설명 없이 번역만 출력)\n"
+        )
+    return (
+        "너는 '칭송받는 자 시리즈: 모노크롬 뫼비우스' 한국어 현지화 번역가다.\n"
+        "목표: 게임에 실제로 넣어도 어색하지 않은 자연스러운 번역.\n"
+        "규칙:\n"
+        "1) 출력은 반드시 JSON 배열. 입력 배열과 길이 동일.\n"
+        "2) 각 요소는 문자열이며, 추가 텍스트/설명/주석 금지.\n"
+        "3) 원문 안의 { ... } 태그는 문자 단위로 절대 수정/삭제/추가/이동하지 말 것.\n"
+        "4) [漢字*ふりがな] 형태는 출력에서 루비를 제거하고 漢字만 남길 것.\n"
+        "5) 원문에 섞인 추출 잡음(예: Ц, Ч)은 { ... } 밖에서는 출력에서 제거.\n"
+        "6) 영어는 번역하지 말고 그대로 유지.\n"
+        "7) 용어/인물/관계 규칙은 아래 사전 섹션을 반드시 준수.\n"
+        + nl_rule
+    )
+
+
+def build_dict_section(bundle: DictBundle, *, terms_subset: Optional[Dict[str, str]] = None) -> str:
+    people_lines = []
+    for k in sorted(bundle.people.keys()):
+        v = bundle.people[k]
+        if isinstance(v, dict):
+            ko = v.get("ko") or v.get("name_ko") or v.get("name") or ""
+            gender = v.get("gender") or v.get("sex") or ""
+        else:
+            ko = str(v)
+            gender = ""
+        if ko:
+            people_lines.append(f"{k}={ko}/{gender}".strip("/"))
+
+    use_terms = terms_subset if terms_subset is not None else bundle.terms
+    terms_lines = [f"{k}={use_terms[k]}" for k in sorted(use_terms.keys())]
+
+    rel_lines = []
+    if bundle.relations:
+        rel_lines.append(yaml.safe_dump(bundle.relations, allow_unicode=True, sort_keys=True).strip())
+
+    style_lines = []
+    if bundle.style:
+        style_lines.append(yaml.safe_dump(bundle.style, allow_unicode=True, sort_keys=True).strip())
+
+    return (
+        "### 인물 사전\n" + "\n".join(people_lines) + "\n\n"
+        "### 용어 사전\n" + "\n".join(terms_lines) + "\n\n"
+        "### 관계/호칭 규칙\n" + ("\n".join(rel_lines) if rel_lines else "(없음)") + "\n\n"
+        "### 문체 규칙\n" + ("\n".join(style_lines) if style_lines else "(없음)") + "\n"
+    )
+
+
+def translate_batch(
+    client: OpenAI,
+    model: str,
+    bundle: DictBundle,
+    src_lines: List[str],
+    temperature: float = 0.2,
+    max_output_tokens: int = 4000,
+    dict_scope: str = "subset",
+    strict_newlines: bool = True,
+) -> List[str]:
+    sys_inst = build_system_instructions(bundle, strict_newlines=strict_newlines)
+
+    if strict_newlines:
+        encoded_src_lines = [encode_newlines_for_model(s) for s in src_lines]
+    else:
+        encoded_src_lines = src_lines[:]
+
+    # Reduce prompt cost by only sending terms that appear in this batch.
+    terms_subset = None
+    if dict_scope == "subset":
+        joined = "\n".join(src_lines)
+        terms_subset = {k: v for k, v in bundle.terms.items() if k and k in joined}
+
+    dict_block = build_dict_section(bundle, terms_subset=terms_subset)
+
+    user_input = {
+        "task": "Translate JA->KO for game localization.",
+        "notes": "Return JSON array only.",
+        "dicts": dict_block,
+        "lines": encoded_src_lines,
+    }
+
+    resp = client.responses.create(
+        model=model,
+        instructions=sys_inst,
+        input=json.dumps(user_input, ensure_ascii=False),
+        temperature=temperature,
+        max_output_tokens=max_output_tokens,
+    )
+    text = resp.output_text.strip()
+
+    try:
+        data = json.loads(text)
+    except Exception:
+        text2 = text.strip("` \n")
+        data = json.loads(text2)
+
+    if not isinstance(data, list) or len(data) != len(encoded_src_lines):
+        raise ValueError(
+            f"Bad output shape. expected list[{len(encoded_src_lines)}], got {type(data)} len={len(data) if isinstance(data, list) else 'n/a'}"
+        )
+
+    out_lines_encoded: List[str] = []
+    for s in data:
+        if not isinstance(s, str):
+            s = str(s)
+        s = strip_ruby_notation(s)
+        s = remove_noise_outside_tags(s)
+        out_lines_encoded.append(s)
+
+    # ---- 추가: 원문에 없는 중괄호 태그 제거 (브레이스만 제거) ----
+    cleaned: List[str] = []
+    for src_e, out_e in zip(encoded_src_lines, out_lines_encoded):
+        allowed = set(extract_game_tags(src_e))  # src에 존재하는 게임 태그만 허용
+        cleaned.append(strip_unexpected_brace_tags(out_e, allowed))
+    out_lines_encoded = cleaned
+
+
+    # 1) game tag preservation (exclude NL_TAG/NL_ESC)
+    ok, msg = validate_game_tag_preservation(encoded_src_lines, out_lines_encoded)
+    if not ok:
+        raise ValueError(msg)
+
+    # 2) strict newline: auto-repair NL_TAG count mismatch (do NOT fail hard)
+    if strict_newlines:
+        repaired: List[str] = []
+        for src_e, out_e in zip(encoded_src_lines, out_lines_encoded):
+            repaired.append(repair_nl_tags_to_match(src_e, out_e))
+        out_lines_encoded = repaired
+
+    # Decode
+    out_lines: List[str] = []
+    if strict_newlines:
+        for s in out_lines_encoded:
+            out_lines.append(decode_newlines_from_model(s))
+    else:
+        out_lines = out_lines_encoded
+
+    return out_lines
+
+
+def chunked(seq: List[dict], n: int) -> List[List[dict]]:
+    return [seq[i : i + n] for i in range(0, len(seq), n)]
+
+
+def is_needs_translation(row: dict, *, blanks_only: bool = True) -> bool:
+    ko = (row.get("ko") or "").strip()
+    ja = (row.get("ja") or "").strip()
+    if not ja:
+        return False
+    if blanks_only:
+        return not ko
+    # extended: retranslate if ko equals ja or still has lots of JP
+    if not ko or ko == ja:
+        return True
+    return bool(re.search(r"[ぁ-んァ-ヴ一-龥]", ko))
+
+
+def is_rate_limit_error(e: Exception) -> bool:
+    if isinstance(e, RateLimitError):
+        return True
+    msg = str(e)
+    return "429" in msg or "rate limit" in msg.lower() or "quota" in msg.lower()
+
+
+def compute_backoff_seconds(e: Exception, attempt: int) -> float:
+    retry_after = None
+    for attr in ("retry_after", "retry_after_seconds"):
+        if hasattr(e, attr):
+            try:
+                retry_after = float(getattr(e, attr))
+            except Exception:
+                retry_after = None
+    if retry_after and retry_after > 0:
+        return min(120.0, retry_after + 0.5)
+    return min(90.0, 2.0 ** attempt + 1.0)
+
+
+# -----------------------------
+# Main
+# -----------------------------
+def main():
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    ap_tr = sub.add_parser("translate", help="translate ja->ko; output .xlsx or .csv depending on --out extension")
+    ap_tr.add_argument("--xlsx", required=True)
+    ap_tr.add_argument("--out", required=True)
+    ap_tr.add_argument("--env-file", required=True)
+    ap_tr.add_argument("--model", default="gpt-4.1")
+    ap_tr.add_argument("--chunk", type=int, default=40)
+    ap_tr.add_argument("--dict-people", required=True)
+    ap_tr.add_argument("--dict-terms", required=True)
+    ap_tr.add_argument("--dict-relations", default=None)
+    ap_tr.add_argument("--dict-style", default=None)
+    ap_tr.add_argument("--cache-db", default=".cache.sqlite3")
+    ap_tr.add_argument("--max-retries", type=int, default=6)
+    ap_tr.add_argument(
+        "--retranslate-jp",
+        action="store_true",
+        default=False,
+        help="Also translate rows where ko is non-empty but still looks like Japanese.",
+    )
+    ap_tr.add_argument(
+        "--dict-scope",
+        choices=["subset", "full"],
+        default="subset",
+        help="Send only glossary entries relevant to each chunk (subset) or the full glossary.",
+    )
+    ap_tr.add_argument("--min-delay", type=float, default=0.25, help="Minimum seconds to sleep between API calls.")
+    ap_tr.add_argument(
+        "--strict-newlines",
+        dest="strict_newlines",
+        action="store_true",
+        default=True,
+        help="Encode newlines as tags internally; output keeps same newline count as best effort (default ON).",
+    )
+    ap_tr.add_argument(
+        "--no-strict-newlines",
+        dest="strict_newlines",
+        action="store_false",
+        help="Disable newline shielding.",
+    )
+    ap_tr.add_argument(
+        "--wrap-text",
+        dest="wrap_text",
+        action="store_true",
+        default=True,
+        help="Set wrap_text=True for ko cells when writing xlsx (default ON).",
+    )
+    ap_tr.add_argument(
+        "--no-wrap-text",
+        dest="wrap_text",
+        action="store_false",
+        help="Do not change Excel cell wrap_text.",
+    )
+    ap_tr.add_argument(
+        "--save-every-batch",
+        dest="save_every_batch",
+        action="store_true",
+        default=True,
+        help="(xlsx mode) checkpoint save after each chunk (default ON).",
+    )
+    ap_tr.add_argument(
+        "--no-save-every-batch",
+        dest="save_every_batch",
+        action="store_false",
+        help="(xlsx mode) disable checkpoint saving.",
+    )
+
+    args = ap.parse_args()
+
+    if args.cmd == "translate":
+        key = load_api_key(args.env_file)
+        client = OpenAI(api_key=key)
+        bundle = load_dicts(args.dict_people, args.dict_terms, args.dict_relations, args.dict_style)
+        sig = bundle.signature()
+
+        out_path = Path(args.out)
+        out_ext = out_path.suffix.lower()
+
+        blanks_only = not bool(args.retranslate_jp)
+        cache = SqliteCache(Path(args.cache_db))
+
+        try:
+            # -------------------------
+            # CSV MODE
+            # -------------------------
+            if out_ext == ".csv":
+                wb, ws, rows = load_master_dialog_rows(str(Path(args.xlsx)))
+                done_ids = load_done_ids_from_csv(out_path)
+
+                to_tr = []
+                for r in rows:
+                    if not is_needs_translation(r, blanks_only=blanks_only):
+                        continue
+                    rid = make_row_id(r)
+                    if rid in done_ids:
+                        continue
+                    to_tr.append(r)
+
+                if not to_tr:
+                    print("Nothing to translate (or already in CSV).")
+                    return
+
+                writer, fhandle = open_csv_writer(out_path)
+
+                pbar = tqdm(total=len(to_tr), desc="Translating(CSV)", unit="line")
+
+                for group in chunked(to_tr, args.chunk):
+                    src_lines = [r["ja"] for r in group]
+
+                    cache_key = stable_hash(
+                        "csv_v1",
+                        args.model,
+                        args.dict_scope,
+                        str(bool(args.strict_newlines)),
+                        sig,
+                        json.dumps(src_lines, ensure_ascii=False),
+                    )
+
+                    cached = cache.get(cache_key)
+                    if cached:
+                        out_lines = json.loads(cached)
+                    else:
+                        last_err: Optional[Exception] = None
+                        out_lines = []
+                        for attempt in range(args.max_retries + 1):
+                            try:
+                                out_lines = translate_batch(
+                                    client,
+                                    args.model,
+                                    bundle,
+                                    src_lines,
+                                    dict_scope=args.dict_scope,
+                                    strict_newlines=bool(args.strict_newlines),
+                                )
+                                cache.set(cache_key, json.dumps(out_lines, ensure_ascii=False))
+                                last_err = None
+                                break
+                            except Exception as e:
+                                last_err = e
+                                if is_rate_limit_error(e):
+                                    time.sleep(compute_backoff_seconds(e, attempt))
+                                    continue
+                                # other errors: small backoff and retry
+                                time.sleep(min(20.0, 1.0 + attempt * 1.5))
+                        if last_err is not None:
+                            raise RuntimeError(
+                                f"Failed to translate batch starting at row {group[0]['rownum']}: {last_err}"
+                            ) from last_err
+
+                    write_csv_group(writer, group, out_lines)
+                    fhandle.flush()  # <- 매 배치마다 저장(중단 대비)
+                    pbar.update(len(group))
+                    time.sleep(max(0.0, float(args.min_delay)))
+
+                pbar.close()
+                fhandle.close()
+                print(f"Saved CSV: {out_path}")
+                return
+
+            # -------------------------
+            # XLSX MODE (기존 유지)
+            # -------------------------
+            base_xlsx = out_path if out_path.exists() else Path(args.xlsx)
+            wb, ws, rows = load_master_dialog_rows(str(base_xlsx))
+
+            to_tr = [r for r in rows if is_needs_translation(r, blanks_only=blanks_only)]
+            if not to_tr:
+                print("Nothing to translate.")
+                atomic_save_workbook(wb, out_path)
+                return
+
+            ko_col = get_ko_col(ws)
+            pbar = tqdm(total=len(to_tr), desc="Translating(XLSX)", unit="line")
+
+            for group in chunked(to_tr, args.chunk):
+                src_lines = [r["ja"] for r in group]
+
+                cache_key = stable_hash(
+                    "xlsx_v1",
+                    args.model,
+                    args.dict_scope,
+                    str(bool(args.strict_newlines)),
+                    sig,
+                    json.dumps(src_lines, ensure_ascii=False),
+                )
+
+                cached = cache.get(cache_key)
+                if cached:
+                    out_lines = json.loads(cached)
+                else:
+                    last_err: Optional[Exception] = None
+                    out_lines = []
+                    for attempt in range(args.max_retries + 1):
+                        try:
+                            out_lines = translate_batch(
+                                client,
+                                args.model,
+                                bundle,
+                                src_lines,
+                                dict_scope=args.dict_scope,
+                                strict_newlines=bool(args.strict_newlines),
+                            )
+                            cache.set(cache_key, json.dumps(out_lines, ensure_ascii=False))
+                            last_err = None
+                            break
+                        except Exception as e:
+                            last_err = e
+                            if is_rate_limit_error(e):
+                                time.sleep(compute_backoff_seconds(e, attempt))
+                                continue
+                            time.sleep(min(20.0, 1.0 + attempt * 1.5))
+                    if last_err is not None:
+                        raise RuntimeError(
+                            f"Failed to translate batch starting at row {group[0]['rownum']}: {last_err}"
+                        ) from last_err
+
+                write_ko_group(ws, ko_col, group, out_lines, wrap_text=bool(args.wrap_text))
+                if args.save_every_batch:
+                    atomic_save_workbook(wb, out_path)
+
+                pbar.update(len(group))
+                time.sleep(max(0.0, float(args.min_delay)))
+
+            pbar.close()
+            atomic_save_workbook(wb, out_path)
+            print(f"Saved XLSX: {out_path}")
+            return
+
+        except KeyboardInterrupt:
+            # 안전 종료(캐시 커밋됨, CSV는 flush로 이미 저장됨)
+            print("\n[Interrupted] Stopping safely.")
+            return
+        finally:
+            cache.close()
+
+
+if __name__ == "__main__":
+    main()

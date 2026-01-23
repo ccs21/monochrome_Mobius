@@ -1,0 +1,306 @@
+﻿id,jp_name,en_name,ko_name
+Chara_50185,━━━,———,━━━
+Chara_20001,〃,─,
+Chara_22801,おじいさん,Elderly Man,
+Chara_22602,おじさん,Older Man,
+Chara_22600,おじさん※欠番,─,
+Chara_22400,おっかけの男,Obsessive Boy,
+Chara_22902,おばあさん,Elderly Woman,
+Chara_22900,おばあさん※欠番,─,
+Chara_22702,おばさん,Older Woman,
+Chara_22701,おばさん※欠番,─,
+Chara_50012,お土産屋さん,Souvenir Seller,선물 가게
+Chara_50025,ならず者,Rogue,불량한 자
+Chara_22401,にーやん,Big Bro,
+Chara_22501,ねーやん,Big Sis,
+Chara_00800,アシュタ,Ashta,아슈타
+Chara_04600,アシュタ・ナーヴァ,Ashta and Nava,아슈타・나바
+Chara_50003,アシワラ出身の女,Woman From Ashiwara,아시와라 출신의 여자
+Chara_50004,アシワラ出身の男,Man From Ashiwara,아시와라 출신의 남자
+Chara_04700,アヅマ,Azuma,아즈마
+Chara_02900,アンジュ,Anju,안쥬
+Chara_22000,アーヴァ＝シュランの兵,Arva Shulan Soldier,
+Chara_21600,アーヴァ＝シュランの行商人,Arva Shulan Merchant,
+Chara_21700,アーヴァ＝シュランの行商人のウマ,Arva Shulan Merchant's Horse,
+Chara_21800,アーヴァ＝シュランの装備屋,Arva Shulan Equipment Shop,
+Chara_50005,イサマン一家侠客,Isaman Mobster,이사만 일가 협객
+Chara_04500,イシネン,Ishinen,이시넨
+Chara_50006,イズルハ出身の男,Man From Izuruha,이즈루하 출신의 남자
+Chara_40800,イヅモ衛兵,Izumo Guard,
+Chara_04900,イナヅマ,Inazuma,이나즈마
+Chara_01900,イラワジ,Irawaji,이라와지
+Chara_02500,ウォシス,Woshis,워시스
+Chara_00004,ウコン,Ukon,우콘
+Chara_50007,ウコン・サコン,Ukon and Sakon,우콘・사콘
+Chara_01500,ウルゥル,Uruuru,
+Chara_41000,エピローグテロップ用,For Epilogue Telop,
+Chara_50008,エンナカムイ隊商人,Ennakamuy Trader,엔나카무이 대상인
+Chara_00000,オシュトル,Oshtor,오슈토르
+Chara_50009,オシュトル・シューニャ,Oshtor and Shunya,오슈토르・슈나
+Chara_50001,オシュトル・ミカヅチ,Oshtor and Mikazuchi,오슈토르・미카즈치
+Chara_50002,オシュトル・ミカヅチ・ハル,"Oshtor, Mikazuchi, and Halu",오슈토르・미카즈치・하루
+Chara_50010,オシュトル・ミカヅチ・ムネチカ,"Oshtor, Mikazuchi, and Munechika",오슈토르・미카즈치・무네치카
+Chara_50011,オシュトル・ムネチカ,Oshtor and Munechika,오슈토르・무네치카
+Chara_10000,オシュトル召喚,Oshtor Summon,
+Chara_10100,オシュトル変身,Oshtor Transformation,
+Chara_02600,オーゼン,Ozen,오우젠
+Chara_50013,ガウンジ,Gaunji,
+Chara_02000,キウル,Kiwru,키우루
+Chara_50015,キママゥ,Kimamau,
+Chara_50014,ギギリ人形,Gigiri Doll,기기리 인형
+Chara_35000,ケツァルコアトル,Quetzalcoatl,
+Chara_35001,ケツァルコアトルの腕,Arm of Quetzalcoatl,
+Chara_00005,コピーオシュトル,Copy Oshtor,
+Chara_00311,コピーミカヅチ,Copy Mikazuchi,
+Chara_00403,コピームネチカ,Copy Munechika,
+Chara_50016,ゴロツキ,Thug,양아치
+Chara_00308,サコン,Sakon,사콘
+Chara_01600,サラァナ,Saraana,
+Chara_50179,ザクロ,Zakuro,자쿠로
+Chara_04100,シチーリヤ,Shichirya,시치리야
+Chara_04200,シャスリカ,Shyasurika,
+Chara_03600,シュンライ,Shunrai,
+Chara_00100,シューニャ,Shunya,슈냐
+Chara_50018,シューニャ・ハル,Shunya and Halu,슈냐・하루
+Chara_50019,シューニャ・ムネチカ,Shunya and Munechika,슈냐・무네치카
+Chara_50017,シーちゃん,Shii,치쨩
+Chara_04800,ジロン,Jiron,지론
+Chara_25000,セーブヌコ,Sehb Nuko,
+Chara_02100,ソヤンケクル,Soyankekur,소얀케쿠르
+Chara_50020,ソヤンケクル・オーゼン,Soyankekur and Ozen,소얀케쿠르・오우젠
+Chara_50021,ゾルビュエイ兵,Zorubyuei Soldier,
+Chara_03800,チココア,Chikokoa,
+Chara_50022,チンピラ,Hooligan,양아치
+Chara_02300,ディコトマ,Dikotoma,디코토마
+Chara_50023,ディコトマ・ハル,Dikotoma and Halu,디코토마・하루
+Chara_03000,デコポンポ,Dekopompo,데코폼포
+Chara_02700,トキフサ,Tokifusa,
+Chara_01800,トリコリ,Torikori,토리코리
+Chara_50024,ナコク出身の女,Woman From Nakoku,나코쿠 출신의 여자
+Chara_01200,ナラクファラ,Narakfala,나락파라
+Chara_00900,ナーヴァ,Nava,나바
+Chara_01700,ネコネ,Nekone,네코네
+Chara_50026,ネコネ・キウル,Nekone and Kiwru,네코네・키우루
+Chara_50027,ハミャグリ,Hamyaguri,하미야구리
+Chara_00200,ハル,Halu,하루
+Chara_50028,ハル・ディコトマ,Halu and Dikotoma,하루・디코토마
+Chara_00600,パシュパクル,Pashpakur,파쉬파쿠르
+Chara_50181,ホオズキ,Hozuki,호즈키
+Chara_01400,ホノカ,Honoka,호노카
+Chara_23000,ホロロン鳥,Hororon,
+Chara_03100,ボコイナンテ,Bokoinante,보코이난테
+Chara_50180,マサムネ,Masamune,마사무네
+Chara_01000,マヤカゥア,Mayacowl,마야카아
+Chara_50029,マヤカゥア・ナラクファラ,Mayacowl and Narakfala,
+Chara_00500,マロロ,Maroro,마로로
+Chara_00300,ミカヅチ,Mikazuchi,미카즈치
+Chara_10200,ミカヅチ召喚,Mikazuchi Summon,
+Chara_10300,ミカヅチ変身,Mikazuchi Transformation,
+Chara_04000,ミズシマ,Mizushima,
+Chara_01301,ミト,Mito,미토
+Chara_50030,ミト・ウコン・サコン,"Mito, Ukon, and Sakon",미토・우콘・사콘
+Chara_50031,ミト・ディコトマ,Mito and Dikotoma,
+Chara_03700,ミライ,Mirai,미라이
+Chara_50032,ミライ？,Mirai?,미라이?
+Chara_03200,ミルージュ,Miruhj,
+Chara_03900,ムツミ,Mutsumi,
+Chara_00400,ムネチカ,Munechika,무네치카
+Chara_25100,ムネチカの召喚虫,Munechika's Summoned Insect,
+Chara_50035,ムネチカ・ミカヅチ,Munechika and Mikazuchi,무네치카・미카즈치
+Chara_00401,ムネチカ武人モード,Munechika Combat Mode,
+Chara_02800,ムラサメ,Murasame,무라사메
+Chara_50033,ムーちゃん,Muu,무쨩
+Chara_50034,ムーちゃん・シーちゃん,Muu and Shii,무쨩·치쨩
+Chara_50036,メイドロボ,Maid Robot,메이드 로봇
+Chara_21400,ヤマトの乗り物,Yamato Vehicle,
+Chara_21900,ヤマトの兵,Yamato Soldier,
+Chara_20900,ヤマトの民・中年女,Yamato Middle-aged Woman,
+Chara_20800,ヤマトの民・中年男,Yamato Middle-aged Man,
+Chara_20700,ヤマトの民・女性,Yamato Woman,
+Chara_20300,ヤマトの民・少女,Yamato Young Girl,
+Chara_20200,ヤマトの民・少年,Yamato Young Boy,
+Chara_20100,ヤマトの民・幼児・女,Yamato Little Girl,
+Chara_20000,ヤマトの民・幼児・男,Yamato Little Boy,
+Chara_21100,ヤマトの民・老人女,Yamato Elderly Woman,
+Chara_21000,ヤマトの民・老人男,Yamato Elderly Man,
+Chara_20400,ヤマトの民・青年男,Yamato Young Man,
+Chara_20500,ヤマトの民・青年男(筋肉質),Yamato Young Man (Muscular),
+Chara_20600,ヤマトの民・青年男(荷物運び),Yamato Young Man (Carrying Baggage),
+Chara_21500,ヤマトの炭鉱夫,Yamato Coal Miner,
+Chara_21200,ヤマトの行商人,Yamato Merchant,
+Chara_21300,ヤマトの装備屋,Yamato Equipment Shop,
+Chara_21910,ヤマトの騎兵(槍もった番兵),Yamato Cavalry (Spear-wielding Guard),
+Chara_03400,ユゥリ,Yuuri,유리
+Chara_50037,ユゥリ・ンハライ,Yuuri and Nhalai,
+Chara_02400,ライコウ,Raiko,라이코우
+Chara_25200,ライコウの召喚兵,Raiko's Summoned Soldier,
+Chara_05000,ライデン,Raiden,라이덴
+Chara_02501,ラウラウ先生,Mr. Raurau,라우라우 선생
+Chara_35100,ラスボス,Final Boss,
+Chara_50177,ランシュタル,Ranshtal,란슈탈
+Chara_50178,ランシュタルの妻,Ranshtal's Wife,란슈탈의 아내
+Chara_04400,ラヴィエ,Ravieh,
+Chara_03500,リョウゲン,Ryogen,리오겐
+Chara_04300,リヴェルニ,Liveruni,
+Chara_03300,ンハライ,Nhalai,운하라이
+Chara_01100,ヴァルガ,Varga,바르가
+Chara_02200,ヴライ,Vurai,브라이
+Chara_10400,ヴライ召喚,Vurai Summon,
+Chara_50039,一人目,The First One,
+Chara_50040,一同,All,일동
+Chara_50070,三下,Underling,미토
+Chara_50071,三下たち,Underlings,미토 일행
+Chara_50072,三人,The Three,세사람
+Chara_50073,三人目,The Third One,
+Chara_50125,中年女性,Middle-Aged Woman,중년 여성
+Chara_50126,中年男性,Middle-Aged Man,중년 남성
+Chara_50140,二人目,The Second One,
+Chara_50104,人形,Doll,인형
+Chara_50074,仕入れ商人,Wholesaler,매입 상인
+Chara_50147,付き人,Attendant,수행원
+Chara_50055,休日中の兵,Off-Duty Soldier,휴가중인 병사
+Chara_50135,伝令,Messenger,전령
+Chara_50175,俥夫,Rickshaw Puller,인력거꾼
+Chara_22300,健気な女の子,Brave Girl,
+Chara_50061,元気な夫,Energetic Man,건강한 남편
+Chara_50060,元気な妻,Energetic Woman,건강한 아내
+Chara_50109,全員,All,전원
+Chara_50152,兵,Soldier,병사
+Chara_40000,兵士,Soldier,
+Chara_50153,兵士達,Soldiers,병사들
+Chara_50136,刀狩りの剣客,Sword Hunter,칼잡이의 검객
+Chara_50171,列整理担当者,Line Organizer,대열정리 담당자
+Chara_50090,初老の男,Older Man,초로의 남자
+Chara_50062,厳つい顔の男,Stern-Looking Man,엄격한 얼굴의 사나이
+Chara_50110,双子,Twins,쌍둥이
+Chara_50041,右近衛衆,Imperial Guard of the Right,
+Chara_50139,呑んだくれ,Drunkard,술 마시는 사람
+Chara_50098,商人,Merchant,
+Chara_50099,商人に扮した役人,Official in Merchant Disguise,상인으로 변장한 관리
+Chara_50100,商人の霊,Merchant's Spirit,상인의 영혼
+Chara_22500,困っている女,Troubled Girl,
+Chara_50121,地縛霊,Ghost,지박령
+Chara_50107,声,Voice,목소리
+Chara_50176,壺振り,Dealer,도박사
+Chara_50115,大きな唄い手,Bigger Singer,큰 소리꾼
+Chara_50116,大店の主人,Shopkeeper,큰 가게 주인
+Chara_22302,女の子,Girl,여자아이
+Chara_22301,女の子※欠番,─,
+Chara_50092,女の子の母親,Girl's Mother,여자의 어머니
+Chara_50093,女の子達,Girls,여자 아이들
+Chara_50094,女の霊,Girl's Spirit,여자의 영혼
+Chara_50096,女主人,Proprietress,여주인
+Chara_50095,女官,Lady-in-Waiting,
+Chara_22502,女性,Woman,여성
+Chara_22201,子供,Child,
+Chara_50075,子分,Henchman,
+Chara_50051,学士,Scholar,학사
+Chara_50154,宝鉱夫,Miner,광부
+Chara_50157,宝鉱夫の監督,Mining Supervisor,광부 감독관
+Chara_50155,宝鉱夫・右,Miner on the Right,광부(우)
+Chara_50156,宝鉱夫・左,Miner on the Left,광부(좌)
+Chara_50054,客,Customer,손님
+Chara_50087,宿屋の主人,Innkeeper,여관 주인
+Chara_50088,宿屋の女子衆,Worker,여인숙의 여종업원
+Chara_50089,宿屋の女将,Madam Innkeeper,여관 안주인
+Chara_22700,宿屋店主,Innkeeper,
+Chara_50148,富くじ屋のオヤジ,Prize Draw Man,복권쟁이 아재
+Chara_50079,射的屋の兄ちゃん,Shooting Gallery Guy,사격장의 남자
+Chara_50101,小さな唄い手,Little Singer,작은 소리꾼
+Chara_50102,少女,Young Girl,소녀
+Chara_50056,居酒屋の店主,Bar Manager,술집 주인
+Chara_50045,屋台の親父,Stallkeeper,포장마차의 아저씨
+Chara_50067,左近衛衆,Imperial Guard of the Left,좌근위대
+Chara_40400,市場の客,Market Shopper,시장의 손님
+Chara_01300,帝,Mikado,황제
+Chara_50128,帝都からの使者,Messenger From the Capital,제도로부터의 사자
+Chara_50129,帝都から来た商人,Merchant From the Capital,제도에서 온 상인
+Chara_50166,幼い女の子,Little Girl,어린 소녀
+Chara_50132,店の主人,Manager,가게 주인
+Chara_50133,店の女の子,Hostess,가게의 소녀
+Chara_40300,店の女の子,Shop Girl,가게의 소녀
+Chara_50134,店の女の子たち,Hostesses,가게의 여자아이들
+Chara_50130,庭師,Gardener,정원사
+Chara_50131,廷臣,Courtier,신하
+Chara_50049,廻船問屋の主人,Trading Vessel Captain,회선 도매상의 주인
+Chara_50083,手紙,Letter,편지
+Chara_00700,教皇（シャントゥーラ）,Shantuura,
+Chara_50169,旅人,Traveler,여행자
+Chara_40100,村人,Villager,
+Chara_50112,村人たち,Villagers,마을 사람들
+Chara_22800,村長,Village Chief,촌장
+Chara_50059,検非違使,Capital Guard,검비위사
+Chara_50149,武芸者,Martial Artist,무예가
+Chara_50158,民衆,Crowd,민중
+Chara_50105,水路の管理人,Canal Supervisor,수로 관리인
+Chara_50086,獣面の男,Beast-Faced Man,동물 얼굴의 남자
+Chara_50167,用心棒の子分,Bodyguard's Henchman,
+Chara_50117,男,Man,남자
+Chara_22200,男の子,Boy,남자아이
+Chara_22402,男性,Man,남성
+Chara_50119,男衆全員,Men,남성 전원
+Chara_40200,町人,Commoner,동네 사람
+Chara_50127,町人,Townsperson,동네 사람
+Chara_50146,病気の夫,Sickly Husband,병든 남편
+Chara_50145,病気の妻,Sickly Wife,병든 아내
+Chara_50050,皆,Everyone,모두
+Chara_50159,目つきの鋭い老人,Sharp-Eyed Old Man,눈빛이 날카로운 노인
+Chara_22101,研究員（女）,Researcher (F),
+Chara_22100,研究員（男）,Researcher (M),
+Chara_50069,砦守備兵,Fortress Guard,요새수비병
+Chara_50068,砦守備隊長,Fortress Guard Captain,요새 수비 대장
+Chara_50143,碑文,Inscription,비문
+Chara_50168,絡繰り人形,Mechanical Doll,꼭두각시 인형
+Chara_50042,羽振りの良い商人,Influential Merchant,위세 좋은 상인
+Chara_50173,老婆,Elderly Woman,노파
+Chara_50172,老客,Senior Customer,노객
+Chara_50174,老爺,Elderly Man,늙은이
+Chara_50151,聞き覚えのある声,Familiar Voice,익숙한 목소리
+Chara_50078,自警団の若者,Young Vigilante,자경단의 젊은이
+Chara_50057,興奮気味の青年,Agitated Youngster,흥분기운이 있는 청년
+Chara_50085,舟侍,Boatman,시종
+Chara_50080,若い女性,Young Woman,젊은 여성
+Chara_50081,若奥様,Young Married Woman,젊은 마님
+Chara_50082,若衆頭,Young Man,젊은 중
+Chara_50123,茶屋の客,Teahouse Customer,찻집 손님
+Chara_50122,茶屋の看板娘,Teahouse Waitress,찻집 간판 아가씨
+Chara_50124,茶店の女主人,Teahouse Manager,찻집의 여주인
+Chara_50064,荒くれ者,Hoodlum,
+Chara_50047,荷をさばく商人,Busy Merchant,짐을 싸는 상인
+Chara_50048,荷を積む男性,Loader,짐을 싣는 남자
+Chara_50065,行商人,Traveling Merchant,보따리 장수
+Chara_50043,衛兵,Guard,위병
+Chara_50044,衛兵・衛兵,Guards,
+Chara_50111,装備屋の主人,Equipment Seller,장비점 주인
+Chara_00007,裸オシュトル,Naked Oshtor,
+Chara_00501,裸マロロ,Naked Maroro,
+Chara_00314,裸ミカヅチ,Naked Mikazuchi,
+Chara_50150,覆面の男,Masked Man,가면의 남자
+Chara_50138,討伐隊兵士,Squad Member,토벌대 병사
+Chara_50137,討伐隊長,Squad Captain,토벌 대장
+Chara_50142,買い物客,Customer,쇼핑객
+Chara_50163,輸送商,Caravan Merchant,행상인
+Chara_50164,輸送団長,Caravan Chief,수송단장
+Chara_50141,農家の親父,Farmer,농가의 아저씨
+Chara_50058,近衛衆,Imperial Guard,근위병
+Chara_40600,追っ手,Pursuer,
+Chara_50165,遊宮のお嬢,Hot Spot Girl,유궁 아가씨
+Chara_50106,酔っぱらった町人,Drunk Townsman,술취한 상인
+Chara_22901,里の長,Village Elder,
+Chara_50162,野次馬,Onlooker,구경꾼
+Chara_40700,門衛,Gatekeeper,문지기
+Chara_50161,門衛達,Gatekeepers,문지기들
+Chara_50053,関所兵,Checkpoint Guard,관문병
+Chara_50052,関所隊長,Checkpoint Guard Captain,관문 대장
+Chara_50114,隊長,Captain,대장
+Chara_50063,雇われ用心棒,Hired Bodyguard,
+Chara_50170,霊,Specter,
+Chara_50108,青年,Youth,청년
+Chara_50046,音声,Voice,음성
+Chara_50144,飛脚,Express Messenger,파발
+Chara_50103,食道楽な老爺,Elderly Epicure,식도락을 즐기는 노인
+Chara_40500,飼育場の親父,Breeder,사육장의 아저씨
+Chara_50084,首を抱えた男,Man Carrying Heads,목을 움켜쥔 사나이
+Chara_50066,骨董商,Antique Seller,골동품 상인
+Chara_00008,髭なしウコン,Beardless Ukon,
+Chara_50182,？,？,?

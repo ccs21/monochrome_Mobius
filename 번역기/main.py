@@ -502,25 +502,68 @@ def translate_batch(
         "lines": encoded_src_lines,
     }
 
-    resp = client.responses.create(
-        model=model,
-        instructions=sys_inst,
-        input=json.dumps(user_input, ensure_ascii=False),
-        temperature=temperature,
-        max_output_tokens=max_output_tokens,
+    # --- robust call/parse: retry on bad JSON / wrong list length ---
+    max_attempts = 3
+    last_exc: Exception | None = None
+    data = None
+
+    # Strengthen notes with expected count (helps the model obey output shape).
+    user_input["notes"] = (
+        f"Return JSON array ONLY with exactly {len(encoded_src_lines)} strings (one per input line). "
+        "Do not add/remove items. If unsure, output an empty string for that line."
     )
-    text = resp.output_text.strip()
 
-    try:
-        data = json.loads(text)
-    except Exception:
-        text2 = text.strip("` \n")
-        data = json.loads(text2)
-
-    if not isinstance(data, list) or len(data) != len(encoded_src_lines):
-        raise ValueError(
-            f"Bad output shape. expected list[{len(encoded_src_lines)}], got {type(data)} len={len(data) if isinstance(data, list) else 'n/a'}"
+    for attempt in range(1, max_attempts + 1):
+        resp = client.responses.create(
+            model=model,
+            instructions=sys_inst,
+            input=json.dumps(user_input, ensure_ascii=False),
+            temperature=temperature,
+            max_output_tokens=max_output_tokens,
         )
+        text = resp.output_text.strip()
+
+        try:
+            parsed = json.loads(text)
+        except Exception:
+            try:
+                text2 = text.strip("` \n")
+                parsed = json.loads(text2)
+            except Exception as e:
+                last_exc = e
+                continue
+
+        if isinstance(parsed, list) and len(parsed) == len(encoded_src_lines):
+            data = parsed
+            break
+
+        last_exc = ValueError(
+            f"Bad output shape. expected list[{len(encoded_src_lines)}], got {type(parsed)} len={len(parsed) if isinstance(parsed, list) else 'n/a'}"
+        )
+
+        # Nudge the model harder on subsequent attempts.
+        user_input["notes"] = (
+            f"IMPORTANT: Output MUST be a JSON array with EXACTLY {len(encoded_src_lines)} items. "
+            "No explanations. No markdown. No extra keys. If you must, use empty strings."
+        )
+
+    if data is None:
+        # Fallback: split the batch and translate halves to preserve alignment.
+        if len(src_lines) >= 2:
+            mid = len(src_lines) // 2
+            left = translate_batch(
+                client, model, bundle, src_lines[:mid],
+                temperature=temperature, max_output_tokens=max_output_tokens,
+                dict_scope=dict_scope, strict_newlines=strict_newlines,
+            )
+            right = translate_batch(
+                client, model, bundle, src_lines[mid:],
+                temperature=temperature, max_output_tokens=max_output_tokens,
+                dict_scope=dict_scope, strict_newlines=strict_newlines,
+            )
+            return left + right
+        # Single line still failed -> raise the last parsing/shape error.
+        raise last_exc if last_exc else RuntimeError("Failed to parse model output")
 
     out_lines_encoded: List[str] = []
     for s in data:

@@ -1,0 +1,9 @@
+﻿scenario_dir,Label,missing_tokens,extra_tokens,en,ko
+scenarios_05_07000,05_07000_0450,,{d009600} {d-1},"Aye, but to be a scholar's my dream. And nothing short of {d009700}Master Scholar{d-1} shall satisfy my family.","마로에게는{d009600}학사{d-1}가 되는 꿈이 있사옵니다.
+아니, {d009700}전학사{d-1}밖에 허락받지 못하옵니다."
+scenarios_05_14000,05_14000_1260,,{d012100} {d-1},Start me off with a new bottle. We'll need something to snack on as well.,"새로운{d012100}보틀{d-1}을 넣어줄까나.
+안주도 적당히 시키거라."
+scenarios_07_04000,07_04000_0300,,{d014500} {d-1},But do you know what the Onvitaikayan called girls like you? Phoneys.,"하지만 알고 있나?
+위대한 아버지 온비타이카얀은 너 같은 자를 존경을 담아 이렇게 불렀다더군━━『누코{d014500}가면』{d-1}이라고."
+scenarios_07_04000,07_04000_0340,,{d014400} {d-1},No one takes your girly persona seriously. So save yourself the effort.,"가면━━아니, 누{d014400}코{d-1}는 금방 벗겨지는 법.
+포기가 상책이야."
