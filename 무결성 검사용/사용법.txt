@@ -1,0 +1,3 @@
+python dump_original_lang_en_hashes.py "D:\GameRoot" 399
+
+python dump_patch_hashes.py "D:\MyPatch\patch" 399
