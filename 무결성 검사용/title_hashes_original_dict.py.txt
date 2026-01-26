@@ -1,4 +1,0 @@
-# paste this into your patcher
-HASHES = {
-    "lang.en": {"sha1": "33282DEB56BE2A3D13F2F38694A67B4B8A893C89", "size": 365894},
-}
