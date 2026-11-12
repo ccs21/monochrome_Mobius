@@ -6,21 +6,3 @@ UI, 아이템 등 대사 이외의 번역은 유니티 번역 플러그인을 �
 대사는 파일 패치 형식으로 작업 합니다.
 
 번역은 gpt-4.1 번역, 검수 및 수정은 하지 않습니다.
-
-
-# GPT 번역 자동화
-
-## 스캔
-```
-python main.py scan --xlsx "번역.xlsx" --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel_updated.yaml"
-```
-
-## 번역
-```
-python main.py translate --xlsx "번역.xlsx" --out "ko_translated.csv" --env-file "F:\모노크롬 한글패치\work\.env" --model "gpt-4.1" --chunk 40 --min-delay 0.2 --dict-people "people_dict_from_excel.yaml" --dict-terms "terms_dict_from_excel.yaml" --dict-relations "relations_rules_from_excel.yaml" --dict-style "style_rules.yaml"
-```
-
-## 번역된 문서를 마스터에 병합
-```
-python merge_ko_by_scenario_label.py --master master_dialog.csv --translated ko_translated.csv --out master_dialog_filled.csv
-```
